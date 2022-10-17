@@ -9,18 +9,42 @@ async function main(args) {
   if (outdir == null || target == null || extraArg != null) {
     throw new Error("usage: render <outdir> { <seed> | <address> }");
   }
-  const seed = generateSeed(target);
-  console.log("Seed:", seed);
-  const traits = traitsLib.extractTraits(seed);
-  console.log("Traits:", JSON.stringify(traits, null, 2));
 
-  const { imageData, renderData } = await render({ seed, width: 2400 });
-  const basename = `${new Date().toISOString()}-${seed}.png`;
-  const outfile = path.join(outdir, basename);
-  await fs.promises.writeFile(outfile, imageData);
+  let i = 0;
 
-  console.log("Render data:", JSON.stringify(renderData, null, 2));
-  console.log("Image:", outfile);
+  var timetaken = "Time taken to render 500 seeds";
+  console.time(timetaken);
+  while (i < 500) {
+    const seed = generateSeed(target);
+    const traits = traitsLib.extractTraits(seed);
+    if (!checkTraits(traits)) {
+      //console.log('Skipped a seed.');
+      continue;
+    }
+    i++;
+    // console.log("Seed:", seed);
+    // console.log("Traits:", JSON.stringify(traits, null, 2));
+    const { imageData, renderData } = await render({ seed, width: 2400 });
+    console.log(renderData);
+    const basename = `${new Date().toISOString()}-${seed}.png`;
+    const outfile = path.join(outdir, basename);
+    await fs.promises.writeFile(outfile, imageData);
+    //console.log("Render data:", JSON.stringify(renderData, null, 2));
+    //console.log("Image:", outfile);
+  }
+  console.timeEnd(timetaken);
+//   const seed = generateSeed(target);
+//   console.log("========== Image #", i);
+//   console.log("Seed:", seed);
+//   const traits = traitsLib.extractTraits(seed);
+//   console.log("Traits:", JSON.stringify(traits, null, 2));
+
+//   const { imageData, renderData } = await render({ seed, width: 2400 });
+//   const basename = `${new Date().toISOString()}-${seed}.png`;
+//   const outfile = path.join(outdir, basename);
+//   await fs.promises.writeFile(outfile, imageData);
+//   console.log("Render data:", JSON.stringify(renderData, null, 2));
+//   console.log("Image:", outfile);
 }
 
 function generateSeed(target) {
@@ -50,6 +74,20 @@ function randomSeed(address) {
   buf[26] = buf[27] = 0xff; // version sentinel
   buf[28] = (buf[28] & 0x0f) | (version << 4);
   return "0x" + buf.toString("hex");
+}
+
+function checkTraits(traits) {
+  if (traits["colorPalette"] != "Fidenza") return false;
+  if (traits["colorMode"] != "Stacked") return false;
+  if (traits["colorVariety"] != "Medium") return false;
+  if (traits["spacing"] != "Dense") return false;
+  if (traits["sizeVariety"] != "Constant") return false;
+  if (traits["ringSize"] != "Small") return false;
+  if (traits["turbulence"] != "None") return false;
+  if (traits["ringThickness"] != "Mixed") return false;
+  if (traits["margin"] != "Crisp") return false;
+
+  return true;
 }
 
 main(process.argv.slice(2)).catch((e) => {
