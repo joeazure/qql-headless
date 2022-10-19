@@ -3,6 +3,7 @@ const path = require("path");
 
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
+const RENDER_CNT = 200;
 
 async function main(args) {
   const [outdir, target, extraArg] = args;
@@ -11,40 +12,38 @@ async function main(args) {
   }
 
   let i = 0;
-
-  var timetaken = "Time taken to render 500 seeds";
+  let seedList = []; 
+  var timetaken = "Time taken to generate " + RENDER_CNT + " desired seeds";
   console.time(timetaken);
-  while (i < 500) {
+  while (i < RENDER_CNT) {
     const seed = generateSeed(target);
     const traits = traitsLib.extractTraits(seed);
+    // comment these out for totally random
     if (!checkTraits(traits)) {
-      //console.log('Skipped a seed.');
       continue;
     }
+    seedList.push(seed);
+    //console.log(i);
     i++;
+  }
+  console.timeEnd(timetaken);
+  timetaken = "Time taken to render " + RENDER_CNT + " seeds";
+  console.time(timetaken);
+  for (let i = 0; i < seedList.length; i++) {
+    seed = seedList[i];
     // console.log("Seed:", seed);
     // console.log("Traits:", JSON.stringify(traits, null, 2));
     const { imageData, renderData } = await render({ seed, width: 2400 });
-    console.log(renderData);
+    console.log("Render #", i, ": ", renderData);
     const basename = `${new Date().toISOString()}-${seed}.png`;
     const outfile = path.join(outdir, basename);
     await fs.promises.writeFile(outfile, imageData);
-    //console.log("Render data:", JSON.stringify(renderData, null, 2));
-    //console.log("Image:", outfile);
+    const info_file = path.join(outdir, basename + ".txt");
+    await fs.promises.writeFile(info_file, JSON.stringify(renderData, null, 2));
+
   }
   console.timeEnd(timetaken);
-//   const seed = generateSeed(target);
-//   console.log("========== Image #", i);
-//   console.log("Seed:", seed);
-//   const traits = traitsLib.extractTraits(seed);
-//   console.log("Traits:", JSON.stringify(traits, null, 2));
 
-//   const { imageData, renderData } = await render({ seed, width: 2400 });
-//   const basename = `${new Date().toISOString()}-${seed}.png`;
-//   const outfile = path.join(outdir, basename);
-//   await fs.promises.writeFile(outfile, imageData);
-//   console.log("Render data:", JSON.stringify(renderData, null, 2));
-//   console.log("Image:", outfile);
 }
 
 function generateSeed(target) {
@@ -77,14 +76,34 @@ function randomSeed(address) {
 }
 
 function checkTraits(traits) {
-  if (traits["colorPalette"] != "Fidenza") return false;
-  if (traits["colorMode"] != "Stacked") return false;
+  //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
+  if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
+  //if (traits["colorMode"] != "Stacked") return false;
+  if (traits["colorMode"] != "Simple") return false;
+
   if (traits["colorVariety"] != "Medium") return false;
+ //if (traits["colorVariety"] != "Low") return false;
+ //if (traits["colorVariety"] != "High") return false;
+
+  if (traits["flowField"] != "Random Radial") return false;
+  //if (traits["flowField"] != "Random Linear") return false;
+
+
   if (traits["spacing"] != "Dense") return false;
-  if (traits["sizeVariety"] != "Constant") return false;
-  if (traits["ringSize"] != "Small") return false;
-  if (traits["turbulence"] != "None") return false;
-  if (traits["ringThickness"] != "Mixed") return false;
+  //if (traits["structure"] != "Orbital") return false;
+  //if (traits["structure"] != "Formation") return false;
+
+  //if (traits["sizeVariety"] != "Constant") return false;
+  if (traits["sizeVariety"] != "Wild") return false;
+  //if (traits["ringSize"] != "Small") return false;
+  if (traits["ringSize"] != "Large") return false;
+
+  // if (traits["turbulence"] != "None") return false;
+  if (traits["turbulence"] != "High") return false;
+
+  //if (traits["ringThickness"] != "Mixed") return false;
+  if (traits["ringThickness"] != "Thick") return false;
+  //if (traits["ringThickness"] != "Thin") return false;
   if (traits["margin"] != "Crisp") return false;
 
   return true;
