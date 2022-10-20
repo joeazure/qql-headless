@@ -76,12 +76,12 @@ function randomSeed(address) {
 
 function checkTraits(traits) {
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
-  if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
-  //if (traits["colorMode"] != "Stacked") return false;
-  if (traits["colorMode"] != "Simple") return false;
+  //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
+  if (traits["colorMode"] != "Stacked") return false;
+  //if (traits["colorMode"] != "Simple") return false;
 
-  if (traits["colorVariety"] != "Medium") return false;
- //if (traits["colorVariety"] != "Low") return false;
+  //if (traits["colorVariety"] != "Medium") return false;
+  if (traits["colorVariety"] != "Low") return false;
  //if (traits["colorVariety"] != "High") return false;
 
   if (traits["flowField"] != "Random Radial") return false;
@@ -89,13 +89,14 @@ function checkTraits(traits) {
 
 
   if (traits["spacing"] != "Dense") return false;
+  
   //if (traits["structure"] != "Orbital") return false;
   //if (traits["structure"] != "Formation") return false;
 
   //if (traits["sizeVariety"] != "Constant") return false;
   if (traits["sizeVariety"] != "Wild") return false;
   //if (traits["ringSize"] != "Small") return false;
-  if (traits["ringSize"] != "Large") return false;
+  //if (traits["ringSize"] != "Large") return false;
 
   // if (traits["turbulence"] != "None") return false;
   if (traits["turbulence"] != "High") return false;
