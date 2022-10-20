@@ -6,8 +6,10 @@ async function main(args) {
     throw new Error("usage: see_from_file.js <filename> ");
   }
   
-  var seed = utils.seed_from_filename(filename);
+  const seed = utils.seed_from_filename(filename);
   console.log(seed);
+  const { eth_hex, qql_hex } = utils.split_hexseed(seed);
+  console.log("Address: ", eth_hex, " Seed: ", qql_hex);
   return seed;
 }
 

@@ -23,7 +23,6 @@ async function main(args) {
       continue;
     }
     seedList.push(seed);
-    //console.log(i);
     i++;
   }
   console.timeEnd(timetaken);
