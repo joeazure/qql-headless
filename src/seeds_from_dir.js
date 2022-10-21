@@ -8,7 +8,8 @@ async function main(args) {
  
   const seed_list = await utils.seedlist_from_dir(dir_name);
   for (var i = 0; i < seed_list.length; i++) {
-    console.log(utils.split_hexseed(seed_list[i]));   
+    //console.log(utils.split_hexseed(seed_list[i]));   
+    console.log(seed_list[i]);   
   }
 }
 

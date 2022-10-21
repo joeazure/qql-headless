@@ -4,10 +4,6 @@ const fs = require("fs");
 function is_qql_output_filename(fname) {
   // Look for .png extension and existence og '-0x'
   const f = fname.toLowerCase();
-  // console.log("Checking fName " + f);
-  // console.log(f.includes("-0x"));
-  // console.log(f.toLowerCase().endsWith(".png"));
-  // console.log((f.includes("-0x")) && (f.toLowerCase().endsWith(".png")));
   return (f.includes("-0x")) && (f.toLowerCase().endsWith(".png"));
 }
 
@@ -31,6 +27,16 @@ function seed_from_filename(filename) {
   return seed;
 }
 
+function is_valid_full_seed(seed) {
+  if (!seed.match(/^0x[0-9a-f]*$/)) {
+    return false;
+  }
+  if (seed.length != 128) {
+    return false;
+  }
+  return true;
+}
+
 function split_hexseed(seed) {
   // Assumes hexstring is like: 0x + 32 byte hex (64 chrs)
   // 0x37b15e06ad0f4520ccdd8c2557d2a28da0354f7d06e4b13c1f35ffff10a99eb7
@@ -51,3 +57,4 @@ exports.seed_from_filename = seed_from_filename;
 exports.split_hexseed = split_hexseed;
 exports.is_qql_output_filename = is_qql_output_filename;
 exports.seedlist_from_dir = seedlist_from_dir;
+exports.is_valid_full_seed = is_valid_full_seed;

@@ -4,6 +4,7 @@ const path = require("path");
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const RENDER_CNT = 200;
+const TWO_RING = false;
 
 async function main(args) {
   const [outdir, target, extraArg] = args;
@@ -22,7 +23,12 @@ async function main(args) {
     if (!checkTraits(traits)) {
       continue;
     }
-    seedList.push(seed);
+    if (TWO_RING == true) {
+      const s2 = seed.substr(0, seed.length-3) + 'f' + seed.substr(-3);
+      seedList.push(s2);
+    } else {
+      seedList.push(seed);
+    }
     i++;
   }
   console.timeEnd(timetaken);
@@ -89,13 +95,16 @@ function checkTraits(traits) {
 
 
   if (traits["spacing"] != "Dense") return false;
-  
+
   //if (traits["structure"] != "Orbital") return false;
-  //if (traits["structure"] != "Formation") return false;
+  if (traits["structure"] != "Formation") return false;
+  //if (traits["structure"] != "Shadows") return false;
 
   //if (traits["sizeVariety"] != "Constant") return false;
   if (traits["sizeVariety"] != "Wild") return false;
-  //if (traits["ringSize"] != "Small") return false;
+  
+  if (traits["ringSize"] != "Small") return false;
+  //if (traits["ringSize"] != "Medium") return false;
   //if (traits["ringSize"] != "Large") return false;
 
   // if (traits["turbulence"] != "None") return false;
@@ -104,7 +113,10 @@ function checkTraits(traits) {
   //if (traits["ringThickness"] != "Mixed") return false;
   if (traits["ringThickness"] != "Thick") return false;
   //if (traits["ringThickness"] != "Thin") return false;
+
   if (traits["margin"] != "Crisp") return false;
+  // if (traits["margin"] != "Wide") return false;
+  // if (traits["margin"] != "None") return false;
 
   return true;
 }
