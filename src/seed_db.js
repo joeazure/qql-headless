@@ -1,7 +1,7 @@
 const utils = require("./utils");
 
 const db = require("../../models");
-const SeedDB = db.seed_db;
+const Wallet = db.Wallet;
 
 function ingest_seed(hexseed) {
   // Inserts a single hexseed into the seed_db
@@ -12,7 +12,13 @@ function ingest_seed(hexseed) {
   const { eth_hex, qql_hex } = utils.split_hexseed(seed);
 
   // check for existing wallet
-  const users = await User.findAll();
+  const walelt = Wallet.findOne({
+      where: {
+        address: eth_hex
+    }
+  });
+  console.log("Wallet Found: " + eth_hex);
+
 }
 
   
