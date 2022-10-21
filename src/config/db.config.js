@@ -1,5 +1,5 @@
 module.exports = {
-    HOST: "localhost",
+    HOST: "StudioUltra.local",
     USER: "qql",
     PASSWORD: "qql",
     DB: "qql",
