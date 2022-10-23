@@ -1,6 +1,6 @@
 const utils = require("./utils");
 
-const db = require("../../models");
+const db = require("./models");
 const Wallet = db.Wallet;
 
 function ingest_seed(hexseed) {
@@ -21,4 +21,5 @@ function ingest_seed(hexseed) {
 
 }
 
+exports.ingest_seed = ingest_seed;
   
