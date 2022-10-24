@@ -96,9 +96,9 @@ function checkTraits(traits) {
 
   if (traits["spacing"] != "Dense") return false;
 
-  //if (traits["structure"] != "Orbital") return false;
-  if (traits["structure"] != "Formation") return false;
-  //if (traits["structure"] != "Shadows") return false;
+  if (traits["structure"] != "Orbital") return false;
+  //if (traits["structure"] != "Formation") return false;
+  // if (traits["structure"] != "Shadows") return false;
 
   //if (traits["sizeVariety"] != "Constant") return false;
   if (traits["sizeVariety"] != "Wild") return false;
