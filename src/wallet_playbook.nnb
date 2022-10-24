@@ -1,0 +1,25 @@
+{
+    "cells": [
+        {
+            "language": "javascript",
+            "source": [
+                "var seed = \"0x37b15e06ad0f4520ccdd8c2557d2a28da0354f7d7ad08802afdcffff10a2ebb7\";\n\nconst utils = require(\"./utils\");\nconst db = require(\"./models\");\ndb.sequelize.sync()\n  .then(() => {\n    console.log(\"Synced db.\");\n  })\n  .catch((err) => {\n    console.log(\"Failed to sync db: \" + err.message);\n  });"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "const Wallet = db.wallet;\nvar split = utils.split_hexseed(seed);\nconsole.log(split);\nconst seed_db = require('./seed_db.js');\nseed_db.ingest_seed(seed);"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                ""
+            ],
+            "outputs": []
+        }
+    ]
+}
