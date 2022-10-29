@@ -22,7 +22,19 @@ function seedlist_from_dir(dir_name) {
     } 
   });
   return ret;
-} 
+}
+
+function seeds_and_traits_from_dir(dir_name) {
+  const ret = []; 
+  var files = fs.readdirSync(dir_name);
+  files.forEach(function (file) {
+    if (is_qql_output_filename(file) == true) {
+      
+      ret.push(seed_from_filename(file));
+    } 
+  });
+  return ret;  
+}
 
 function seed_from_filename(filename) {
   if (!is_qql_output_filename(filename)) {

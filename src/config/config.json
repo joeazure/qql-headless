@@ -3,7 +3,7 @@
       "username": "qql",
       "password": "qql",
       "database": "qql",
-      "host": "StudioUltra.local",
+      "host": "localhost",
       "dialect": "mysql",
       "logging": false
     },

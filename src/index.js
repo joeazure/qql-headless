@@ -3,13 +3,16 @@ const path = require("path");
 
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
-const RENDER_CNT = 200;
-const TWO_RING = false;
+//const db = require("./models");
+const seed_db = require('./seed_db.js');
+const RENDER_CNT = 500;
+const TWO_RING = true;
+const RENDER_WIDTH = 2400;
 
 async function main(args) {
-  const [outdir, target, extraArg] = args;
-  if (outdir == null || target == null || extraArg != null) {
-    throw new Error("usage: render <outdir> { <seed> | <address> }");
+  const [host, outdir, target, extraArg] = args;
+  if (host == null || outdir == null || target == null || extraArg != null) {
+    throw new Error("usage: render <host> <outdir> { <seed> | <address> }");
   }
 
   let i = 0;
@@ -20,9 +23,9 @@ async function main(args) {
     const seed = generateSeed(target);
     const traits = traitsLib.extractTraits(seed);
     // comment these out for totally random
-    if (!checkTraits(traits)) {
-      continue;
-    }
+    // if (!checkTraits(traits)) {
+    //   continue;
+    // }
     if (TWO_RING == true) {
       const s2 = seed.substr(0, seed.length-3) + 'f' + seed.substr(-3);
       seedList.push(s2);
@@ -38,14 +41,16 @@ async function main(args) {
     seed = seedList[i];
     // console.log("Seed:", seed);
     // console.log("Traits:", JSON.stringify(traits, null, 2));
-    const { imageData, renderData } = await render({ seed, width: 2400 });
-    console.log("Render #", i, ": ", renderData);
+    const { imageData, renderData } = await render({ seed, width: RENDER_WIDTH });
     const basename = `${new Date().toISOString()}-${seed}.png`;
     const outfile = path.join(outdir, basename);
+    const full_outdir = path.resolve(outdir);
     await fs.promises.writeFile(outfile, imageData);
     const info_file = path.join(outdir, basename + ".txt");
     await fs.promises.writeFile(info_file, JSON.stringify(renderData, null, 2));
 
+    // Now insert the render into the DB
+    await seed_db.insert_render(host, full_outdir, basename, seed, RENDER_WIDTH, renderData);
   }
   console.timeEnd(timetaken);
 
@@ -86,8 +91,8 @@ function checkTraits(traits) {
   if (traits["colorMode"] != "Stacked") return false;
   //if (traits["colorMode"] != "Simple") return false;
 
-  //if (traits["colorVariety"] != "Medium") return false;
-  if (traits["colorVariety"] != "Low") return false;
+  if (traits["colorVariety"] != "Medium") return false;
+ // if (traits["colorVariety"] != "Low") return false;
  //if (traits["colorVariety"] != "High") return false;
 
   if (traits["flowField"] != "Random Radial") return false;
@@ -96,19 +101,21 @@ function checkTraits(traits) {
 
   if (traits["spacing"] != "Dense") return false;
 
-  if (traits["structure"] != "Orbital") return false;
+  //if (traits["structure"] != "Orbital") return false;
+  if ((traits["structure"] != "Formation") && (traits["structure"] != "Orbital")) return false;
   //if (traits["structure"] != "Formation") return false;
   // if (traits["structure"] != "Shadows") return false;
 
   //if (traits["sizeVariety"] != "Constant") return false;
   if (traits["sizeVariety"] != "Wild") return false;
   
-  if (traits["ringSize"] != "Small") return false;
-  //if (traits["ringSize"] != "Medium") return false;
+  //if (traits["ringSize"] != "Small") return false;
+  if (traits["ringSize"] != "Medium") return false;
   //if (traits["ringSize"] != "Large") return false;
 
   // if (traits["turbulence"] != "None") return false;
-  if (traits["turbulence"] != "High") return false;
+  if (traits["turbulence"] != "Low") return false;
+  //if (traits["turbulence"] != "High") return false;
 
   //if (traits["ringThickness"] != "Mixed") return false;
   if (traits["ringThickness"] != "Thick") return false;

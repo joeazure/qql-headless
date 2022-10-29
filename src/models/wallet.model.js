@@ -6,7 +6,8 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       }
     });
 

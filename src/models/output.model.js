@@ -1,26 +1,26 @@
 module.exports = (sequelize, Sequelize) => {
-    const Render = sequelize.define("render", {
+    const Output = sequelize.define("output", {
       id: {
           type: Sequelize.INTEGER,
           primaryKey: true,
           autoIncrement: true
       },
-      seed_id: {
-        type: Sequelize.INTEGER
-      },
-      backgroundColor: {
-          type: Sequelize.STRING
-      },
-      numColors: {
+      location_id: {
           type: Sequelize.INTEGER
       },
-      numPoints: {
+      render_id: {
           type: Sequelize.INTEGER
       },
-      colorList: {
+      filename: {
           type: Sequelize.STRING
+      },
+      pixelWidth: {
+          type: Sequelize.INTEGER,
+      },
+      renderTime: {
+          type: Sequelize.DATE
       }
     });
 
-    return Render;
+    return Output;
 }

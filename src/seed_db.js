@@ -20,19 +20,11 @@ async function ingest_seed(hexseed) {
     return;
   }
 
-  // check for existing wallet
-  var owner_wallet = await db.wallet.findOne({
-      where: {
-        address: eth_hex
-    }
+  // Use findOrCreate instead of find then create...
+  var [owner_wallet, created] = await db.wallet.findOrCreate({
+    where: { address: eth_hex }
   });
-  if (owner_wallet === null) {
-    // Create a new Wallet
-    owner_wallet = await db.wallet.create({
-      address: eth_hex
-    });
-    console.log("New wallet created");
-  }
+
   
     // Now insert the seed and traits is a transaction
     //console.log('Inserting algorithm seed: ' + qql_hex);
@@ -59,7 +51,9 @@ async function ingest_seed(hexseed) {
       sizeVariety: traits["sizeVariety"],
       colorPalette: traits["colorPalette"],
       spacing: traits["spacing"]
-    });  
+    });
+    // Return the new Seed ID
+    return new_seed.id; 
 }
 
 function ingest_seed_list(seed_list) {
@@ -68,7 +62,40 @@ function ingest_seed_list(seed_list) {
   }
 }
 
+async function insert_render(host, location, filename, hexseed, width, renderData) {
+  // Seed/Traits
+  var seed_id = await ingest_seed(hexseed);
+  console.log('New Seed: ' + seed_id);
+  // Location
+  var [location, created] = await db.location.findOrCreate({
+    where: {
+      host: host,
+      folderPath: location
+    }
+  });
+  var loc_id = location.id;
+  console.log('New Location: ' + loc_id);
+  // Render
+  var render = await db.render.create({
+    seed_id: seed_id,
+    backgroundColor: renderData["backgroundColor"],
+    numColors: renderData["numColors"],
+    numPoints: renderData["numPoints"],
+    colorList: renderData["colorsUsed"].join(",")
+  });
+  var render_id = render.id;
+
+  // Output
+  var new_output = await db.output.create({
+    location_id: loc_id,
+    render_id: render_id,
+    filename: filename,
+    pixelWidth: width
+  });
+}
+
 exports.ingest_seed = ingest_seed;
 exports.ingest_seed_list = ingest_seed_list;
+exports.insert_render = insert_render;
 
   
