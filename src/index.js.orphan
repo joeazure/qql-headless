@@ -1,17 +1,15 @@
 const fs = require("fs");
 const path = require("path");
-const webp = require('webp-converter');
+
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
-const seed_db = require('./seed_db.js');
-const RENDER_CNT = 1;
+const RENDER_CNT = 300;
 const TWO_RING = false;
-const RENDER_WIDTH = 2400;
 
 async function main(args) {
-  const [host, outdir, target, extraArg] = args;
-  if (host == null || outdir == null || target == null || extraArg != null) {
-    throw new Error("usage: render <host> <outdir> { <seed> | <address> }");
+  const [outdir, target, extraArg] = args;
+  if (outdir == null || target == null || extraArg != null) {
+    throw new Error("usage: render <outdir> { <seed> | <address> }");
   }
 
   let i = 0;
@@ -40,28 +38,14 @@ async function main(args) {
     seed = seedList[i];
     // console.log("Seed:", seed);
     // console.log("Traits:", JSON.stringify(traits, null, 2));
-    const { imageData, renderData } = await render({ seed, width: RENDER_WIDTH });
+    const { imageData, renderData } = await render({ seed, width: 2400 });
+    console.log("Render #", i, ": ", renderData);
     const basename = `${new Date().toISOString()}-${seed}.png`;
     const outfile = path.join(outdir, basename);
-    const full_outdir = path.resolve(outdir);
     await fs.promises.writeFile(outfile, imageData);
-
-
     const info_file = path.join(outdir, basename + ".txt");
     await fs.promises.writeFile(info_file, JSON.stringify(renderData, null, 2));
 
-    // Now insert the render into the DB
-    await seed_db.insert_render(host, full_outdir, basename, seed, RENDER_WIDTH, renderData);
-
-    // Write a webp as well
-    const wp_name = basename + ".webp";
-    const wp_file = path.join(outdir, wp_name);
-  
-    let result = webp.buffer2webpbuffer(imageData, "png", "-q 60");
-    result.then(function(result) {
-        fs.writeFileSync(wp_file, result);
-        //console.log(result)
-    });
   }
   console.timeEnd(timetaken);
 
@@ -98,43 +82,43 @@ function randomSeed(address) {
 
 function checkTraits(traits) {
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
-  //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") && (traits["colorPalette"] != "Berlin")) return false;
-  if (traits["colorMode"] != "Stacked") return false;
+  if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh")  && (traits["colorPalette"] != "Berlin") ) return false;
+  //if (traits["colorMode"] != "Stacked") return false;
+  if (traits["colorMode"] != "Zebra") return false;
   //if (traits["colorMode"] != "Simple") return false;
 
   //if (traits["colorVariety"] != "Medium") return false;
-  // if (traits["colorVariety"] != "Low") return false;
-  if (traits["colorVariety"] != "High") return false;
+  if (traits["colorVariety"] != "Low") return false;
+ //if (traits["colorVariety"] != "High") return false;
 
   if (traits["flowField"] != "Spiral") return false;
   //if (traits["flowField"] != "Random Radial") return false;
-  //if (traits["flowField"] != "Random Linear") return false;
+ //if (traits["flowField"] != "Random Linear") return false;
 
 
   if (traits["spacing"] != "Dense") return false;
 
-  if (traits["structure"] != "Orbital") return false;
-  //if ((traits["structure"] != "Formation") && (traits["structure"] != "Orbital")) return false;
+  //if (traits["structure"] != "Orbital") return false;
   //if (traits["structure"] != "Formation") return false;
-  // if (traits["structure"] != "Shadows") return false;
+  if ((traits["structure"] != "Formation") && (traits["structure"] != "Orbital")) return false;
+  //if (traits["structure"] != "Shadows") return false;
 
   //if (traits["sizeVariety"] != "Constant") return false;
   if (traits["sizeVariety"] != "Wild") return false;
   
-  //if (traits["ringSize"] != "Small") return false;
-  if (traits["ringSize"] != "Medium") return false;
+  if (traits["ringSize"] != "Small") return false;
+  //if (traits["ringSize"] != "Medium") return false;
   //if (traits["ringSize"] != "Large") return false;
 
-  //if (traits["turbulence"] != "None") return false;
-  //if (traits["turbulence"] != "Low") return false;
+  // if (traits["turbulence"] != "None") return false;
   if (traits["turbulence"] != "High") return false;
 
   //if (traits["ringThickness"] != "Mixed") return false;
   if (traits["ringThickness"] != "Thick") return false;
   //if (traits["ringThickness"] != "Thin") return false;
 
-  //if (traits["margin"] != "Crisp") return false;
-  if (traits["margin"] != "Wide") return false;
+  if (traits["margin"] != "Crisp") return false;
+  // if (traits["margin"] != "Wide") return false;
   // if (traits["margin"] != "None") return false;
 
   return true;

@@ -74,7 +74,7 @@ async function insert_render(host, location, filename, hexseed, width, renderDat
     }
   });
   var loc_id = location.id;
-  console.log('New Location: ' + loc_id);
+
   // Render
   var render = await db.render.create({
     seed_id: seed_id,
