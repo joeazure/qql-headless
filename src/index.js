@@ -4,8 +4,8 @@ const webp = require('webp-converter');
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const seed_db = require('./seed_db.js');
-const RENDER_CNT = 1;
-const TWO_RING = false;
+const RENDER_CNT = 1000;
+const TWO_RING = true;
 const RENDER_WIDTH = 2400;
 
 async function main(args) {
@@ -26,7 +26,7 @@ async function main(args) {
       continue;
     }
     if (TWO_RING == true) {
-      const s2 = seed.substr(0, seed.length-3) + 'f' + seed.substr(-3);
+      const s2 = seed.substr(0, seed.length-4) + 'f' + seed.substr(-3);
       seedList.push(s2);
     } else {
       seedList.push(seed);
@@ -44,24 +44,22 @@ async function main(args) {
     const basename = `${new Date().toISOString()}-${seed}.png`;
     const outfile = path.join(outdir, basename);
     const full_outdir = path.resolve(outdir);
-    await fs.promises.writeFile(outfile, imageData);
+    
+    //await fs.promises.writeFile(outfile, imageData);
 
-
-    const info_file = path.join(outdir, basename + ".txt");
-    await fs.promises.writeFile(info_file, JSON.stringify(renderData, null, 2));
-
-    // Now insert the render into the DB
-    await seed_db.insert_render(host, full_outdir, basename, seed, RENDER_WIDTH, renderData);
-
-    // Write a webp as well
-    const wp_name = basename + ".webp";
-    const wp_file = path.join(outdir, wp_name);
-  
     let result = webp.buffer2webpbuffer(imageData, "png", "-q 60");
     result.then(function(result) {
         fs.writeFileSync(wp_file, result);
         //console.log(result)
     });
+    // Write a webp as well
+    const wp_name = basename + ".webp";
+    const wp_file = path.join(outdir, wp_name);
+    const info_file = path.join(outdir, basename + ".txt");
+    await fs.promises.writeFile(info_file, JSON.stringify(renderData, null, 2));
+
+    // Now insert the render into the DB
+    await seed_db.insert_render(host, full_outdir, basename, seed, RENDER_WIDTH, renderData);
   }
   console.timeEnd(timetaken);
 
@@ -99,22 +97,23 @@ function randomSeed(address) {
 function checkTraits(traits) {
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") && (traits["colorPalette"] != "Berlin")) return false;
+  
   if (traits["colorMode"] != "Stacked") return false;
   //if (traits["colorMode"] != "Simple") return false;
 
   //if (traits["colorVariety"] != "Medium") return false;
-  // if (traits["colorVariety"] != "Low") return false;
-  if (traits["colorVariety"] != "High") return false;
+  if (traits["colorVariety"] != "Low") return false;
+  //if (traits["colorVariety"] != "High") return false;
 
-  if (traits["flowField"] != "Spiral") return false;
-  //if (traits["flowField"] != "Random Radial") return false;
+  //if (traits["flowField"] != "Spiral") return false;
+  if (traits["flowField"] != "Random Radial") return false;
   //if (traits["flowField"] != "Random Linear") return false;
 
 
   if (traits["spacing"] != "Dense") return false;
 
-  if (traits["structure"] != "Orbital") return false;
-  //if ((traits["structure"] != "Formation") && (traits["structure"] != "Orbital")) return false;
+  //if (traits["structure"] != "Orbital") return false;
+  if ((traits["structure"] != "Formation") && (traits["structure"] != "Orbital")) return false;
   //if (traits["structure"] != "Formation") return false;
   // if (traits["structure"] != "Shadows") return false;
 
@@ -133,8 +132,8 @@ function checkTraits(traits) {
   if (traits["ringThickness"] != "Thick") return false;
   //if (traits["ringThickness"] != "Thin") return false;
 
-  //if (traits["margin"] != "Crisp") return false;
-  if (traits["margin"] != "Wide") return false;
+  if (traits["margin"] != "Crisp") return false;
+  //if (traits["margin"] != "Wide") return false;
   // if (traits["margin"] != "None") return false;
 
   return true;
