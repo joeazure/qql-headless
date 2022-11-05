@@ -4,8 +4,8 @@ const webp = require('webp-converter');
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const seed_db = require('./seed_db.js');
-const RENDER_CNT = 1000;
-const TWO_RING = true;
+const RENDER_CNT = 2000;
+const TWO_RING = false;
 const RENDER_WIDTH = 2400;
 
 async function main(args) {
@@ -41,20 +41,20 @@ async function main(args) {
     // console.log("Seed:", seed);
     // console.log("Traits:", JSON.stringify(traits, null, 2));
     const { imageData, renderData } = await render({ seed, width: RENDER_WIDTH });
+
     const basename = `${new Date().toISOString()}-${seed}.png`;
     const outfile = path.join(outdir, basename);
     const full_outdir = path.resolve(outdir);
-    
+    const wp_name = basename + ".webp";
+    const wp_file = path.join(outdir, wp_name);
+
     //await fs.promises.writeFile(outfile, imageData);
 
     let result = webp.buffer2webpbuffer(imageData, "png", "-q 60");
     result.then(function(result) {
         fs.writeFileSync(wp_file, result);
-        //console.log(result)
     });
-    // Write a webp as well
-    const wp_name = basename + ".webp";
-    const wp_file = path.join(outdir, wp_name);
+  
     const info_file = path.join(outdir, basename + ".txt");
     await fs.promises.writeFile(info_file, JSON.stringify(renderData, null, 2));
 
@@ -98,7 +98,7 @@ function checkTraits(traits) {
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") && (traits["colorPalette"] != "Berlin")) return false;
   
-  if (traits["colorMode"] != "Stacked") return false;
+  //if (traits["colorMode"] != "Stacked") return false;
   //if (traits["colorMode"] != "Simple") return false;
 
   //if (traits["colorVariety"] != "Medium") return false;
@@ -121,15 +121,15 @@ function checkTraits(traits) {
   if (traits["sizeVariety"] != "Wild") return false;
   
   //if (traits["ringSize"] != "Small") return false;
-  if (traits["ringSize"] != "Medium") return false;
-  //if (traits["ringSize"] != "Large") return false;
+  //if (traits["ringSize"] != "Medium") return false;
+  if (traits["ringSize"] != "Large") return false;
 
   //if (traits["turbulence"] != "None") return false;
   //if (traits["turbulence"] != "Low") return false;
   if (traits["turbulence"] != "High") return false;
 
-  //if (traits["ringThickness"] != "Mixed") return false;
-  if (traits["ringThickness"] != "Thick") return false;
+  if (traits["ringThickness"] != "Mixed") return false;
+  //if (traits["ringThickness"] != "Thick") return false;
   //if (traits["ringThickness"] != "Thin") return false;
 
   if (traits["margin"] != "Crisp") return false;
