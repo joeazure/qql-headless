@@ -12,7 +12,7 @@ async function main(args) {
   const traits = traitsLib.extractTraits(seed);
   console.log(seed);
   console.log("Traits:", JSON.stringify(traits, null, 2));
-  return traits;
+  //return JSON.stringify(traits, null, 2);
 }
 
 main(process.argv.slice(2)).catch((e) => {

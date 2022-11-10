@@ -4,7 +4,7 @@ const webp = require('webp-converter');
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const seed_db = require('./seed_db.js');
-const RENDER_CNT = 2000;
+const RENDER_CNT = 1000;
 const TWO_RING = false;
 const RENDER_WIDTH = 2400;
 
@@ -32,6 +32,7 @@ async function main(args) {
       seedList.push(seed);
     }
     i++;
+    console.log("Generated seed " + i+"/"+RENDER_CNT);
   }
   console.timeEnd(timetaken);
   timetaken = "Time taken to render " + RENDER_CNT + " seeds";
@@ -95,14 +96,15 @@ function randomSeed(address) {
 }
 
 function checkTraits(traits) {
-  //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
+  if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
   //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") && (traits["colorPalette"] != "Berlin")) return false;
   
-  //if (traits["colorMode"] != "Stacked") return false;
+  if (traits["colorMode"] != "Stacked") return false;
   //if (traits["colorMode"] != "Simple") return false;
+  //if (traits["colorMode"] != "Zebra") return false;
 
-  //if (traits["colorVariety"] != "Medium") return false;
   if (traits["colorVariety"] != "Low") return false;
+  //if (traits["colorVariety"] != "Medium") return false;
   //if (traits["colorVariety"] != "High") return false;
 
   //if (traits["flowField"] != "Spiral") return false;
@@ -118,23 +120,29 @@ function checkTraits(traits) {
   // if (traits["structure"] != "Shadows") return false;
 
   //if (traits["sizeVariety"] != "Constant") return false;
+  //if (traits["sizeVariety"] != "Variable") return false;
   if (traits["sizeVariety"] != "Wild") return false;
   
   //if (traits["ringSize"] != "Small") return false;
-  //if (traits["ringSize"] != "Medium") return false;
-  if (traits["ringSize"] != "Large") return false;
+  if (traits["ringSize"] != "Medium") return false;
+  //if (traits["ringSize"] != "Large") return false;
 
   //if (traits["turbulence"] != "None") return false;
   //if (traits["turbulence"] != "Low") return false;
   if (traits["turbulence"] != "High") return false;
 
-  if (traits["ringThickness"] != "Mixed") return false;
+  //if (traits["ringThickness"] != "Mixed") return false;
   //if (traits["ringThickness"] != "Thick") return false;
   //if (traits["ringThickness"] != "Thin") return false;
 
-  if (traits["margin"] != "Crisp") return false;
+  // if (traits["bullseyeRings1"] != "On") return false;
+  // if (traits["bullseyeRings3"] != "On") return false;
+  // if (traits["bullseyeRings7"] != "On") return false;
+
+  if ((traits["margin"] != "Crisp") && (traits["margin"] != "Wide")) return false;
+  //if (traits["margin"] != "Crisp") return false;
   //if (traits["margin"] != "Wide") return false;
-  // if (traits["margin"] != "None") return false;
+  //if (traits["margin"] != "None") return false;
 
   return true;
 }
