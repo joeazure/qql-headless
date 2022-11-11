@@ -5,7 +5,7 @@ const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const seed_db = require('./seed_db.js');
 const utils = require("./utils");
-const RENDER_CNT = 1000;
+const RENDER_CNT = 10;
 const TWO_RING = false;
 const RENDER_WIDTH = 2400;
 
@@ -39,7 +39,7 @@ const traits_147 = {
   bullseyeRings3: "On", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / 0X00 / 0000 / 0000 / 0000
   bullseyeRings7: "On", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / X000 / 0000 / 0000 / 0000
   ringThickness: "Thin", // NON-ENCODED 2 bits		0000 / 0000 / 00XX / 0000 / 0000 / 0000 / 0000
-  ringSize: "Large", // NON-ENCODED 2 bits			0000 / 0000 / XX00 / 0000 / 0000 / 0000 / 0000
+  ringSize: "Small", // NON-ENCODED 2 bits			0000 / 0000 / XX00 / 0000 / 0000 / 0000 / 0000
   sizeVariety: "Wild", // NON-ENCODED 2 bits		0000 / 00XX / 0000 / 0000 / 0000 / 0000 / 0000
   colorPalette: "Fidenza", // 3 bits					000X / XX00 / 0000 / 0000 / 0000 / 0000 / 0000
   spacing: "Dense", // NON-ENCODED 2 bits				0XX0 / 0000 / 0000 / 0000 / 0000 / 0000 / 0000

@@ -93,7 +93,12 @@ function randomSeed() {
 function calc_seed(address, traits) {
   const salt = [...Array(24)].map(() => Math.floor(rng() * 16).toString(16)).join("");
   let seed = traitsLib.encodeTraits(`${address}${salt}`, traits);
-  seed = `${seed.substring(0, 54)}${[...Array(5)].map(() => "0").join("")}${seed.substring(59)}`;
+  seed = `${seed.substring(0, 54)}${[...Array(4)].map(() => "f").join("")}${'1'}${seed.substring(59)}`;
+
+
+  console.log(seed);
+  // seed[27] = seed[28] = 0xff; // version sentinel
+  // seed[29] = (seed[29] & 0x0f) | (traits["version"] << 4);
   return seed;
 }
 
