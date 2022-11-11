@@ -109,4 +109,5 @@ exports.is_qql_render_filename = is_qql_render_filename;
 exports.seedlist_from_dir = seedlist_from_dir;
 exports.is_valid_full_seed = is_valid_full_seed;
 exports.traits_from_seed = traits_from_seed;
+exports.randomSeed = randomSeed;
 exports.calc_seed = calc_seed;

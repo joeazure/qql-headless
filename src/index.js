@@ -5,9 +5,9 @@ const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const seed_db = require('./seed_db.js');
 const utils = require("./utils");
-const RENDER_CNT = 10;
+const RENDER_CNT = 1000;
 const TWO_RING = false;
-const RENDER_WIDTH = 2400;
+const RENDER_WIDTH = 800;
 
 
 const traits_138 = {
@@ -46,6 +46,43 @@ const traits_147 = {
   version: 1
 };
 
+const traits_110 = {
+  flowField: "Random Radial", 
+  turbulence: "Low", 
+  margin: "Wide", 
+  colorVariety: "Low",
+  colorMode: "Stacked",
+  structure: "Orbital",
+  bullseyeRings1: "On",
+  bullseyeRings3: "On",
+  bullseyeRings7: "On",
+  ringThickness: "Mixed",
+  ringSize: "Medium",
+  sizeVariety: "Wild",
+  colorPalette: "Austin",
+  spacing: "Dense",
+  version: 1
+};
+
+const traits_wild_fidenza = {
+  flowField: "Random Radial", 
+  turbulence: "High", 
+  margin: "Crisp", 
+  colorVariety: "High",
+  colorMode: "Stacked",
+  structure: "Orbital",
+  bullseyeRings1: "On",
+  bullseyeRings3: "Off",
+  bullseyeRings7: "On",
+  ringThickness: "Thick",
+  ringSize: "Medium",
+  sizeVariety: "Wild",
+  colorPalette: "Fidenza",
+  spacing: "Dense",
+  version: 1
+};
+
+
 async function main(args) {
   const [host, outdir, target, extraArg] = args;
   if (host == null || outdir == null || target == null || extraArg != null) {
@@ -60,7 +97,7 @@ async function main(args) {
 
     //const seed = generateSeed(target);
     //const seed = utils.calc_seed(target, traits_138); // Custom traits    
-    const seed = utils.calc_seed(target, traits_147);   // Custom traits    
+    const seed = utils.calc_seed(target, traits_wild_fidenza);   // Custom traits    
     const traits = traitsLib.extractTraits(seed);
 
     // comment these out for totally random
