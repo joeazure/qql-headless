@@ -1,6 +1,8 @@
 // Utility functions for qql-headless
 const fs = require("fs");
 const traitsLib = require("./vendor/qql-traits.min.js");
+const rng = require("seedrandom")();
+const _ = require("lodash");
 
 function is_qql_output_filename(fname) {
   // Look for .png extension and existence og '-0x'
@@ -75,6 +77,26 @@ function traits_from_seed(hexseed) {
   return traits;
 }
 
+function randomSeed() {
+  const buf = Buffer.from(
+      Array(32)
+          .fill()
+          .map(() => Math.random() * 256)
+  );
+  // Set "version 1" to get proper spirals.
+  const version = 1;
+  buf[26] = buf[27] = 0xff; // version sentinel
+  buf[28] = (buf[28] & 0x0f) | (version << 4);
+  return "0x" + buf.toString("hex");
+}
+
+function calc_seed(address, traits) {
+  const salt = [...Array(24)].map(() => Math.floor(rng() * 16).toString(16)).join("");
+  let seed = traitsLib.encodeTraits(`${address}${salt}`, traits);
+  seed = `${seed.substring(0, 54)}${[...Array(5)].map(() => "0").join("")}${seed.substring(59)}`;
+  return seed;
+}
+
 exports.seed_from_filename = seed_from_filename;
 exports.split_hexseed = split_hexseed;
 exports.is_qql_output_filename = is_qql_output_filename;
@@ -82,3 +104,4 @@ exports.is_qql_render_filename = is_qql_render_filename;
 exports.seedlist_from_dir = seedlist_from_dir;
 exports.is_valid_full_seed = is_valid_full_seed;
 exports.traits_from_seed = traits_from_seed;
+exports.calc_seed = calc_seed;

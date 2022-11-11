@@ -4,9 +4,47 @@ const webp = require('webp-converter');
 const render = require("./render");
 const traitsLib = require("./vendor/qql-traits.min.js");
 const seed_db = require('./seed_db.js');
+const utils = require("./utils");
 const RENDER_CNT = 1000;
 const TWO_RING = false;
 const RENDER_WIDTH = 2400;
+
+
+const traits_138 = {
+  flowField: "Spiral", // 3 bits					0000 / 0000 / 0000 / 0000 / 0000 / 0000 / 0XXX
+  turbulence: "High", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 0000 / 0000 / 000X / X000
+  margin: "Wide", // NON-ENCODED 2 bits				0000 / 0000 / 0000 / 0000 / 0000 / 0XX0 / 0000
+  colorVariety: "High", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 0000 / 000X / X000 / 0000
+  colorMode: "Stacked", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 0000 / 0XX0 / 0000 / 0000
+  structure: "Orbital", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 000X / X000 / 0000 / 0000
+  bullseyeRings1: "Off", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / 00X0 / 0000 / 0000 / 0000
+  bullseyeRings3: "Off", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / 0X00 / 0000 / 0000 / 0000
+  bullseyeRings7: "On", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / X000 / 0000 / 0000 / 0000
+  ringThickness: "Thick", // NON-ENCODED 2 bits		0000 / 0000 / 00XX / 0000 / 0000 / 0000 / 0000
+  ringSize: "Medium", // NON-ENCODED 2 bits			0000 / 0000 / XX00 / 0000 / 0000 / 0000 / 0000
+  sizeVariety: "Wild", // NON-ENCODED 2 bits		0000 / 00XX / 0000 / 0000 / 0000 / 0000 / 0000
+  colorPalette: "Austin", // 3 bits					000X / XX00 / 0000 / 0000 / 0000 / 0000 / 0000
+  spacing: "Medium", // NON-ENCODED 2 bits				0XX0 / 0000 / 0000 / 0000 / 0000 / 0000 / 0000
+  version: 1
+};
+
+const traits_147 = {
+  flowField: "Random Linear", // 3 bits					0000 / 0000 / 0000 / 0000 / 0000 / 0000 / 0XXX
+  turbulence: "None", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 0000 / 0000 / 000X / X000
+  margin: "Wide", // NON-ENCODED 2 bits				0000 / 0000 / 0000 / 0000 / 0000 / 0XX0 / 0000
+  colorVariety: "High", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 0000 / 000X / X000 / 0000
+  colorMode: "Stacked", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 0000 / 0XX0 / 0000 / 0000
+  structure: "Formation", // NON-ENCODED 2 bits			0000 / 0000 / 0000 / 000X / X000 / 0000 / 0000
+  bullseyeRings1: "On", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / 00X0 / 0000 / 0000 / 0000
+  bullseyeRings3: "On", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / 0X00 / 0000 / 0000 / 0000
+  bullseyeRings7: "On", // NON-ENCODED 1 bit			0000 / 0000 / 0000 / X000 / 0000 / 0000 / 0000
+  ringThickness: "Thin", // NON-ENCODED 2 bits		0000 / 0000 / 00XX / 0000 / 0000 / 0000 / 0000
+  ringSize: "Large", // NON-ENCODED 2 bits			0000 / 0000 / XX00 / 0000 / 0000 / 0000 / 0000
+  sizeVariety: "Wild", // NON-ENCODED 2 bits		0000 / 00XX / 0000 / 0000 / 0000 / 0000 / 0000
+  colorPalette: "Fidenza", // 3 bits					000X / XX00 / 0000 / 0000 / 0000 / 0000 / 0000
+  spacing: "Dense", // NON-ENCODED 2 bits				0XX0 / 0000 / 0000 / 0000 / 0000 / 0000 / 0000
+  version: 1
+};
 
 async function main(args) {
   const [host, outdir, target, extraArg] = args;
@@ -19,12 +57,17 @@ async function main(args) {
   var timetaken = "Time taken to generate " + RENDER_CNT + " desired seeds";
   console.time(timetaken);
   while (i < RENDER_CNT) {
-    const seed = generateSeed(target);
+
+    //const seed = generateSeed(target);
+    //const seed = utils.calc_seed(target, traits_138); // Custom traits    
+    const seed = utils.calc_seed(target, traits_147);   // Custom traits    
     const traits = traitsLib.extractTraits(seed);
+
     // comment these out for totally random
-    if (!checkTraits(traits)) {
-      continue;
-    }
+    //if (!checkTraits(traits)) {
+    // if (!check_traits_138(traits)) {
+    //     continue;
+    // }
     if (TWO_RING == true) {
       const s2 = seed.substr(0, seed.length-4) + 'f' + seed.substr(-3);
       seedList.push(s2);
@@ -79,6 +122,10 @@ function generateSeed(target) {
   );
 }
 
+function custom_seed(address, traits) {
+
+}
+
 function randomSeed(address) {
   if (!Buffer.isBuffer(address) || address.length !== 20)
     throw new Error("expected address, got: " + address);
@@ -96,8 +143,8 @@ function randomSeed(address) {
 }
 
 function checkTraits(traits) {
-  if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
-  //if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") && (traits["colorPalette"] != "Berlin")) return false;
+  // if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") ) return false;
+  if ((traits["colorPalette"] != "Fidenza") && (traits["colorPalette"] != "Edinburgh") && (traits["colorPalette"] != "Berlin")) return false;
   
   if (traits["colorMode"] != "Stacked") return false;
   //if (traits["colorMode"] != "Simple") return false;
@@ -123,8 +170,8 @@ function checkTraits(traits) {
   //if (traits["sizeVariety"] != "Variable") return false;
   if (traits["sizeVariety"] != "Wild") return false;
   
-  //if (traits["ringSize"] != "Small") return false;
-  if (traits["ringSize"] != "Medium") return false;
+  if (traits["ringSize"] != "Small") return false;
+  //if (traits["ringSize"] != "Medium") return false;
   //if (traits["ringSize"] != "Large") return false;
 
   //if (traits["turbulence"] != "None") return false;
@@ -132,7 +179,7 @@ function checkTraits(traits) {
   if (traits["turbulence"] != "High") return false;
 
   //if (traits["ringThickness"] != "Mixed") return false;
-  //if (traits["ringThickness"] != "Thick") return false;
+  if (traits["ringThickness"] != "Thick") return false;
   //if (traits["ringThickness"] != "Thin") return false;
 
   // if (traits["bullseyeRings1"] != "On") return false;
@@ -146,6 +193,26 @@ function checkTraits(traits) {
 
   return true;
 }
+
+
+function check_traits_138(traits) {
+  //console.log("Traits:", JSON.stringify(traits, null, 2));
+  if (traits["colorMode"] != "Stacked") return false;
+  if (traits["colorPalette"] != "Austin") return false;
+  if (traits["colorVariety"] != "High") return false;
+  if (traits["flowField"] != "Spiral") return false;
+  if (traits["margin"] != "Wide") return false;
+  if (traits["ringSize"] != "Medium") return false;
+  if (traits["ringThickness"] != "Thick") return false;
+  if (traits["sizeVariety"] != "Wild") return false;
+  if (traits["spacing"] != "Medium") return false;
+  if (traits["structure"] != "Orbital") return false;
+  if (traits["turbulence"] != "High") return false;
+  console.log('Found a desired Seed!');
+  return true;
+}
+
+
 
 main(process.argv.slice(2)).catch((e) => {
   process.exitCode = process.exitCode || 1;
